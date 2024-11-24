@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using OrderProcessingAPI.DatabaseContext;
+using OrderProcessingAPI.Models.Dto;
 
 namespace OrderProcessingAPI.Controllers;
 
@@ -47,8 +48,8 @@ public class OrderController : ControllerBase
 
     }
 
-    [HttpGet("orders")]
-    public IEnumerable<OrderDetailsDTO> GetAllOrders()
+    [HttpGet("orders/details")]
+    public IEnumerable<OrderDetailsDTO> GetAllOrdersDetails()
     {
          var orderDetailsObj = _dbContext.Orders
                                 .Include(o => o.OrderDetails)        // Eagerly load OrderDetails
@@ -68,6 +69,22 @@ public class OrderController : ControllerBase
                                 })
                                 .ToList();  // Ensure you execute the query and return a list
 
+
+        return orderDetailsObj;
+
+    }
+
+    [HttpGet("orders")]
+    public IEnumerable<OrdersDTO> GetAllOrders()
+    {
+         var orderDetailsObj = _dbContext.Orders
+                                .Select(o => new OrdersDTO
+                                {
+                                    order_id = o.OrderId,
+                                    order_date = o.OrderDate,
+                                    total_amount = o.OrderAmount
+                                })
+                                .ToList(); 
 
         return orderDetailsObj;
 

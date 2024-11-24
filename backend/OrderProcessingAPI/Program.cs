@@ -4,7 +4,12 @@ using OrderProcessingAPI.DatabaseContext;
 var builder = WebApplication.CreateBuilder(args);
 var configuration = builder.Configuration;
 // Add services to the container.
-
+builder.Services.AddCors(options =>{
+    options.AddPolicy(name: "AllowAngularApp",
+                        policy =>{
+                            policy.WithOrigins("http://localhost:4200");
+                        });
+});
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -22,6 +27,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseCors("AllowAngularApp");
 
 app.UseAuthorization();
 
